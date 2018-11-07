@@ -11,30 +11,23 @@ class WindowSlider : public DocumentWindow
 {
 public:
 	WindowSlider(String name) : DocumentWindow(name,
-		Colours::lightgrey,
+		Colours::darkgrey,
 		DocumentWindow::allButtons)
 	{
-		centreWithSize(300, 200);
-		setVisible(true);
+		centreWithSize(800, 800);
+		setUsingNativeTitleBar(true);
 	}
 
 	void closeButtonPressed() override
 	{
-		JUCEApplication::getInstance()->systemRequestedQuit();
+		this->setVisible(false);
 	}
 
-	
+
 	~WindowSlider();
-
-	void paint(Graphics&) override;
-	void resized() override;
-
-	
-
 
 
 private:
-	ScopedPointer<WindowSlider> windowSlider;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WindowSlider)
 };

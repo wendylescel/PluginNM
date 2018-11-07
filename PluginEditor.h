@@ -16,23 +16,27 @@
 //==============================================================================
 /**
 */
-class PluginNmAudioProcessorEditor  : public AudioProcessorEditor, public Button::Listener
+class PluginNmAudioProcessorEditor  : public AudioProcessorEditor
 {
 public:
+
+
     PluginNmAudioProcessorEditor (PluginNmAudioProcessor&);
     ~PluginNmAudioProcessorEditor();
 
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
-	void buttonClicked(Button * button) override;
+	void showWindowSlider();
+	void closeAllWindows();
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
+    
     PluginNmAudioProcessor& processor;
 	TextButton bslid;
-	ScopedPointer<ResizableWindow> window;
+
+	//Array of different windows, easier to handle show, hide
+	Array<Component::SafePointer<ResizableWindow>> windows;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginNmAudioProcessorEditor)
 };

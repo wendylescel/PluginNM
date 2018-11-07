@@ -16,46 +16,67 @@
 PluginNmAudioProcessorEditor::PluginNmAudioProcessorEditor (PluginNmAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
+   //Button for a new window of sliders 
 	addAndMakeVisible(bslid);
-	bslid.addListener(this);
+	bslid.onClick = [this] { showWindowSlider(); };
 	bslid.setButtonText("WindowSlider");
-    setSize (400, 300);
 
-	window = new ResizableWindow("WindowSlider", true);
-	window->setUsingNativeTitleBar(true);
-	window->setCentrePosition(400, 400);
-	window->setVisible(false);
-	window->setResizable(false, false);
-	window->setContentOwned(new WindowSlider("WindowSlider"),true); // maybe rename that to NewGUI or similar
+	//Size of the main window
+    setSize (800,600);
+		
 }
 
 PluginNmAudioProcessorEditor::~PluginNmAudioProcessorEditor()
 {
-	bslid.removeListener(this);
+	closeAllWindows();
 }
 
 //==============================================================================
 void PluginNmAudioProcessorEditor::paint (Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
+    //Characteristics of the main window
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
-
     g.setColour (Colours::white);
-    g.setFont (15.0f);
-    g.drawFittedText ("Hello World!", getLocalBounds(), Justification::centred, 1);
+    g.setFont (11.0f);
+   
 }
 
 void PluginNmAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
-	bslid.setBounds(0, 0, 20, 20);
+    //Placement of the button for the window of slider
+	auto area = getLocalBounds();
+	bslid.setBounds(area.removeFromLeft(108).removeFromTop(20));
+	
+	
 }
 
-void PluginNmAudioProcessorEditor::buttonClicked(Button * button)
+void PluginNmAudioProcessorEditor::showWindowSlider()
 {
-	window->setVisible(true);
+	
+	auto* wsl = new WindowSlider("windowslider");
+	//Add the window in the array
+	windows.add(wsl);
 
+	//Placement of the new window
+	Rectangle<int> area(0, 0, 300, 400);
+	RectanglePlacement placement( RectanglePlacement::xMid
+		| RectanglePlacement::yMid
+		| RectanglePlacement::doNotResize);
+
+	auto result = placement.appliedTo(area, Desktop::getInstance().getDisplays()
+		.getMainDisplay().userArea.reduced(20));
+	wsl->setBounds(result);
+
+	wsl->setResizable(true, true);
+	wsl->setUsingNativeTitleBar(true);
+	wsl->setVisible(true);
+}
+
+void PluginNmAudioProcessorEditor::closeAllWindows()
+{
+	//Loop in the array to destroy each window
+	for (auto& window : windows)
+		window.deleteAndZero();
+	//Clear the array
+	windows.clear();
 }
